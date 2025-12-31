@@ -298,7 +298,7 @@
   {"n": "SUPREME", "p": "Turquía", "c": "Turkey", "t": "Family", "i": 0, "f": "Vekoma", "pk": "Vialand"},
   {"n": "NEFESKESEN", "p": "Turquía", "c": "Turkey", "t": "Launch", "i": 4, "f": "Intamin", "pk": "Vialand"},
   {"n": "RED FIRE", "p": "Turquía", "c": "Turkey", "t": "Accelerator", "i": 2, "f": "Intamin", "pk": "ViaSea"},
-  {"n": "HYPER COASTER", "p": "Turquía", "c": "Turkey", "t": "Hyper Coaster", "i": 3, "f": "Mack Rides", "pk": "The Land of Legends"}
+  {"n": "HYPER COASTER", "p": "Turquía", "c": "Turkey", "t": "Hyper Coaster", "i": 3, "f": "Mack Rides", "pk": "The Land of Legends"},
   {"n": "JUNGLE TRAILBLAZER", "p": "China", "c": "China", "t": "Wooden", "i": 1, "f": "The Gravity Group", "pk": "Fantawild Dreamland Xiamen"},
   {"n": "STRESS EXPRESS", "p": "China", "c": "China", "t": "Wooden", "i": 0, "f": "The Gravity Group", "pk": "Oriental Heritage Ningbo"},
   {"n": "FLIGHT OF THE PHOENIX", "p": "China", "c": "China", "t": "Inverted", "i": 5, "f": "Vekoma", "pk": "Harbin Sunac Land"},
@@ -398,7 +398,7 @@
   {"n": "NINJA", "p": "EE.UU.", "c": "USA", "t": "Sit Down", "i": 5, "f": "Vekoma", "pk": "Six Flags St. Louis"},
   {"n": "CORKSCREW", "p": "EE.UU.", "c": "USA", "t": "Sit Down", "i": 3, "f": "Arrow Dynamics", "pk": "Silverwood"},
   {"n": "TIMBER TERROR", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Custom Coasters", "pk": "Silverwood"},
-  {"n": "TREMORS", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Custom Coasters", "pk": "Silverwood"}
+  {"n": "TREMORS", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Custom Coasters", "pk": "Silverwood"},
   {"n": "ARASHI", "p": "Japón", "c": "Japan", "t": "4D Free Spin", "i": 0, "f": "S&S", "pk": "Nagashima Spa Land"},
   {"n": "ACROBAT", "p": "Japón", "c": "Japan", "t": "Flying", "i": 4, "f": "B&M", "pk": "Nagashima Spa Land"},
   {"n": "STEEL DRAGON 2000", "p": "Japón", "c": "Japan", "t": "Giga Coaster", "i": 0, "f": "Morgan", "pk": "Nagashima Spa Land"},
@@ -498,7 +498,7 @@
   {"n": "FAST AND FURRY-OUS", "p": "EAU", "c": "UAE", "t": "Inverted Family", "i": 0, "f": "Intamin", "pk": "Warner Bros. World Abu Dhabi"},
   {"n": "TOM AND JERRY: SWISS CHEESE SPIN", "p": "EAU", "c": "UAE", "t": "Spinning", "i": 0, "f": "Zamperla", "pk": "Warner Bros. World Abu Dhabi"},
   {"n": "CHASE RACKER", "p": "EAU", "c": "UAE", "t": "Family Launch", "i": 0, "f": "Intamin", "pk": "Warner Bros. World Abu Dhabi"},
-  {"n": "TAREX", "p": "EAU", "c": "UAE", "t": "Family", "i": 0, "f": "Zierer", "pk": "Warner Bros. World Abu Dhabi"}
+  {"n": "TAREX", "p": "EAU", "c": "UAE", "t": "Family", "i": 0, "f": "Zierer", "pk": "Warner Bros. World Abu Dhabi"},
   {"n": "TIG'RR COASTER", "p": "EE.UU.", "c": "USA", "t": "Jet Star", "i": 0, "f": "Schwarzkopf", "pk": "Indiana Beach"},
   {"n": "HOOSIER HURRICANE", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Custom Coasters", "pk": "Indiana Beach"},
   {"n": "CORNball EXPRESS", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Custom Coasters", "pk": "Indiana Beach"},
@@ -598,7 +598,7 @@
   {"n": "VIKING", "p": "Polonia", "c": "Poland", "t": "Spinning", "i": 0, "f": "SBF Visa", "pk": "Energylandia"},
   {"n": "MARS", "p": "Polonia", "c": "Poland", "t": "Junior", "i": 0, "f": "SBF Visa", "pk": "Energylandia"},
   {"n": "FRIDA", "p": "Polonia", "c": "Poland", "t": "Junior", "i": 0, "f": "Vekoma", "pk": "Energylandia"},
-  {"n": "DRAKEN", "p": "Polonia", "c": "Poland", "t": "Junior", "i": 0, "f": "Preston & Barbieri", "pk": "Energylandia"}
+  {"n": "DRAKEN", "p": "Polonia", "c": "Poland", "t": "Junior", "i": 0, "f": "Preston & Barbieri", "pk": "Energylandia"},
   {"n": "REVENGE OF THE MUMMY", "p": "EE.UU.", "c": "USA", "t": "Indoor Launch", "i": 0, "f": "Premier Rides", "pk": "Universal Studios Florida"},
   {"n": "HARRY POTTER AND THE ESCAPE FROM GRINGOTTS", "p": "EE.UU.", "c": "USA", "t": "Hybrid Dark Ride", "i": 0, "f": "Intamin", "pk": "Universal Studios Florida"},
   {"n": "HOLLYWOOD RIP RIDE ROCKIT", "p": "EE.UU.", "c": "USA", "t": "X-Coaster", "i": 0, "f": "Maurer", "pk": "Universal Studios Florida"},
@@ -698,7 +698,7 @@
   {"n": "RUN A WAY TRAIN", "p": "Sudáfrica", "c": "South Africa", "t": "Powered", "i": 0, "f": "Mack Rides", "pk": "Gold Reef City"},
   {"n": "STORM COASTER", "p": "Filipinas", "c": "Philippines", "t": "Indoor", "i": 3, "f": "Vekoma", "pk": "Enchanted Kingdom"},
   {"n": "SPACE SHUTTLE", "p": "Filipinas", "c": "Philippines", "t": "Boomerang", "i": 3, "f": "Vekoma", "pk": "Enchanted Kingdom"},
-  {"n": "ROLLER SKATER", "p": "Filipinas", "c": "Philippines", "t": "Junior", "i": 0, "f": "Vekoma", "pk": "Enchanted Kingdom"}
+  {"n": "ROLLER SKATER", "p": "Filipinas", "c": "Philippines", "t": "Junior", "i": 0, "f": "Vekoma", "pk": "Enchanted Kingdom"},
   {"n": "THE DRAGON", "p": "Reino Unido", "c": "UK", "t": "Family", "i": 0, "f": "Vekoma", "pk": "Legoland Windsor"},
   {"n": "DRAGON'S APPRENTICE", "p": "Reino Unido", "c": "UK", "t": "Junior", "i": 0, "f": "Wgh Transportation", "pk": "Legoland Windsor"},
   {"n": "DUPLO DINO COASTER", "p": "Reino Unido", "c": "UK", "t": "Junior", "i": 0, "f": "ART Engineering", "pk": "Legoland Windsor"},
@@ -798,7 +798,7 @@
   {"n": "BOOMERANG", "p": "EE.UU.", "c": "USA", "t": "Shuttle", "i": 3, "f": "Vekoma", "pk": "Six Flags Darien Lake"},
   {"n": "ROLO COASTER", "p": "EE.UU.", "c": "USA", "t": "Wooden Junior", "i": 0, "f": "PTC", "pk": "Idlewild"},
   {"n": "WILD MOUSE", "p": "EE.UU.", "c": "USA", "t": "Wild Mouse", "i": 0, "f": "Vekoma", "pk": "Idlewild"},
-  {"n": "TUMBLEWEED", "p": "EE.UU.", "c": "USA", "t": "Junior", "i": 0, "f": "Miler Coaster", "pk": "Frontier City"}
+  {"n": "TUMBLEWEED", "p": "EE.UU.", "c": "USA", "t": "Junior", "i": 0, "f": "Miler Coaster", "pk": "Frontier City"},
   {"n": "MISSION FERRARI", "p": "EAU", "c": "UAE", "t": "SFX Coaster", "i": 0, "f": "Dynamic Attractions", "pk": "Ferrari World Abu Dhabi"},
   {"n": "FORMULA ROSSA JUNIOR", "p": "EAU", "c": "UAE", "t": "Junior", "i": 0, "f": "Zamperla", "pk": "Ferrari World Abu Dhabi"},
   {"n": "FLYING ACES", "p": "EAU", "c": "UAE", "t": "Wing Coaster", "i": 2, "f": "Intamin", "pk": "Ferrari World Abu Dhabi"},
@@ -898,7 +898,7 @@
   {"n": "DOUBLE LOOP", "p": "Colombia", "c": "Colombia", "t": "Double Loop", "i": 2, "f": "Schwarzkopf", "pk": "Salitre Magico"},
   {"n": "KRATER", "p": "Colombia", "c": "Colombia", "t": "Euro-Fighter", "i": 3, "f": "Gerstlauer", "pk": "Parque del Cafe"},
   {"n": "YIPPE", "p": "Colombia", "c": "Colombia", "t": "Water Coaster", "i": 0, "f": "Gerstlauer", "pk": "Parque del Cafe"},
-  {"n": "BROCA", "p": "Colombia", "c": "Colombia", "t": "Junior", "i": 0, "f": "Vekoma", "pk": "Parque del Cafe"}
+  {"n": "BROCA", "p": "Colombia", "c": "Colombia", "t": "Junior", "i": 0, "f": "Vekoma", "pk": "Parque del Cafe"},
   {"n": "FALCON'S FLIGHT", "p": "Arabia Saudita", "c": "Saudi Arabia", "t": "Exa Coaster", "i": 0, "f": "Intamin", "pk": "Six Flags Qiddiya City"},
   {"n": "ADRENA-LINE", "p": "Arabia Saudita", "c": "Saudi Arabia", "t": "Suspended", "i": 0, "f": "Vekoma", "pk": "Six Flags Qiddiya City"},
   {"n": "IRONCYCLE TEST RUN", "p": "Crucero", "c": "Disney Cruise Line", "t": "Motorbike", "i": 0, "f": "Vekoma", "pk": "Disney Adventure"},
@@ -998,7 +998,7 @@
   {"n": "LA VIBORA", "p": "EE.UU.", "c": "USA", "t": "Bobsled", "i": 0, "f": "Intamin", "pk": "Six Flags Over Texas"},
   {"n": "JUDGE ROY SCREAM", "p": "EE.UU.", "c": "USA", "t": "Wooden", "i": 0, "f": "Bill Cobb", "pk": "Six Flags Over Texas"},
   {"n": "WONDER WOMAN LASSO OF TRUTH", "p": "EE.UU.", "c": "USA", "t": "Single Rail", "i": 3, "f": "RMC", "pk": "Six Flags Fiesta Texas"},
-  {"n": "DR. DIABOLICAL'S CLIFFHANGER", "p": "EE.UU.", "c": "USA", "t": "Dive Coaster", "i": 3, "f": "B&M", "pk": "Six Flags Fiesta Texas"}
+  {"n": "DR. DIABOLICAL'S CLIFFHANGER", "p": "EE.UU.", "c": "USA", "t": "Dive Coaster", "i": 3, "f": "B&M", "pk": "Six Flags Fiesta Texas"},
   {"n": "DC RIVAL HYPERCOASTER", "p": "Australia", "c": "Australia", "t": "Hyper Coaster", "i": 1, "f": "Mack Rides", "pk": "Warner Bros. Movie World"},
   {"n": "SUPERMAN ESCAPE", "p": "Australia", "c": "Australia", "t": "Accelerator", "i": 0, "f": "Intamin", "pk": "Warner Bros. Movie World"},
   {"n": "GREEN LANTERN COASTER", "p": "Australia", "c": "Australia", "t": "El Loco", "i": 2, "f": "S&S", "pk": "Warner Bros. Movie World"},
@@ -1098,5 +1098,5 @@
   {"n": "SIK", "p": "Reino Unido", "c": "UK", "t": "Sit Down", "i": 10, "f": "Intamin", "pk": "Flamingo Land"},
   {"n": "CLIFF HANGER", "p": "Reino Unido", "c": "UK", "t": "Junior", "i": 0, "f": "Pinfari", "pk": "Blackgang Chine"},
   {"n": "SNAKE", "p": "Reino Unido", "c": "UK", "t": "Junior", "i": 0, "f": "Zierer", "pk": "Pleasurewood Hills"},
-  {"n": "WIPE OUT", "p": "Reino Unido", "c": "UK", "t": "Boomerang", "i": 3, "f": "Vekoma", "pk": "Pleasurewood Hills"}
+  {"n": "WIPE OUT", "p": "Reino Unido", "c": "UK", "t": "Boomerang", "i": 3, "f": "Vekoma", "pk": "Pleasurewood Hills"},
 ]
