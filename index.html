@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coasterdle World - 3000+ Database</title>
+    <style>
+        :root { --bg: #121213; --tile: #3a3a3c; --correct: #538d4e; --present: #b59f3b; --text: #ffffff; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .header { display: flex; justify-content: space-between; width: 100%; max-width: 500px; border-bottom: 1px solid var(--tile); margin-bottom: 20px; padding-bottom: 10px; align-items: center; }
+        .lang-switch button { background: #272729; border: 1px solid var(--tile); padding: 8px; cursor: pointer; border-radius: 4px; font-size: 1.2rem; }
+        .lang-switch button.active { background: var(--correct); }
+        .grid { display: grid; gap: 5px; margin-bottom: 20px; }
+        .row { display: flex; gap: 5px; }
+        .tile { width: 38px; height: 38px; border: 2px solid var(--tile); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold; text-transform: uppercase; border-radius: 2px; }
+        .hints { width: 100%; max-width: 450px; background: #272729; padding: 15px; border-radius: 8px; border-left: 5px solid var(--correct); margin-bottom: 20px; }
+        .search-container { position: relative; width: 100%; max-width: 450px; }
+        input { width: 100%; padding: 15px; background: #121213; border: 2px solid #565758; color: white; border-radius: 4px; font-size: 1rem; box-sizing: border-box; outline: none; }
+        .suggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: #272729; border: 1px solid #3a3a3c; max-height: 200px; overflow-y: auto; z-index: 1000; }
+        .sugg-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #3a3a3c; font-size: 0.85rem; }
+        .btn-main { width: 100%; max-width: 450px; padding: 15px; background: var(--correct); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; border-radius: 4px; }
+        .msg { margin-top: 20px; font-weight: bold; color: #ffd700; text-align: center; }
+        .correct { background-color: var(--correct); border-color: var(--correct); }
+        .present { background-color: var(--present); border-color: var(--present); }
+        .absent { background-color: var(--tile); border-color: var(--tile); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>COASTERDLE</h1>
+        <div class="lang-switch">
+            <button id="es-btn" class="active" onclick="switchLang('es')">🇪🇸</button>
+            <button id="en-btn" onclick="switchLang('en')">🇬🇧</button>
+        </div>
+    </div>
+
+    <div id="game-board" class="grid"></div>
+
+    <div class="hints">
+        <strong id="h-title">Pistas desbloqueadas:</strong>
+        <div id="hints-list"></div>
+    </div>
+
+    <div class="search-container">
+        <div id="suggestions" class="suggestions" style="display:none"></div>
+        <input type="text" id="guess-input" placeholder="Cargando base de datos..." disabled autocomplete="off">
+    </div>
+
+    <button class="btn-main" onclick="processGuess()">ENVIAR (ENTER)</button>
+    <button id="share-btn" class="btn-main" style="display:none; background:#1da1f2;" onclick="shareResult()">COMPARTIR RESULTADO</button>
+    <button onclick="location.reload()" style="background:none; border:none; color:gray; text-decoration:underline; cursor:pointer; margin-top:15px;">🔄 Nueva partida</button>
+
+    <div id="message" class="msg"></div>
+
+    <script>
+        // Configuración de URLs
+        const DB_URL = "https://raw.githubusercontent.com/jalfaro17/coaster-data/main/db.json";
+        const PROXY = "https://corsproxy.io/?";
+
+        let db = [];
+        let target, currentAttempt = 0, lang = 'es', matrix = [];
+
+        const ui = {
+            es: { h: "Pistas desbloqueadas:", ph: "Nombre de la montaña rusa...", win: "🏆 ¡HAS GANADO! Era ", lose: "💀 GAME OVER. Era: ", p: ["🌍 País: ", "🔄 Inversiones: ", "🎢 Tipo: ", "🏗️ Fabricante: ", "📍 Parque: "], copy: "Resultado copiado" },
+            en: { h: "Unlocked hints:", ph: "Coaster name...", win: "🏆 YOU WIN! It was ", lose: "💀 GAME OVER. It was: ", p: ["🌍 Country: ", "🔄 Inversions: ", "🎢 Type: ", "🏗️ Manufacturer: ", "📍 Park: "], copy: "Result copied" }
+        };
+
+        async function init() {
+            const inputField = document.getElementById('guess-input');
+            try {
+                // Intentamos cargar usando el proxy para evitar errores de CORS
+                const response = await fetch(PROXY + encodeURIComponent(DB_URL + '?t=' + Date.now()));
+                if (!response.ok) throw new Error('Error de red');
+                db = await response.json();
+                
+                inputField.disabled = false;
+                inputField.placeholder = ui[lang].ph;
+                setupGame();
+            } catch (err) {
+                console.warn("Proxy fallido o error de red, intentando carga directa...");
+                try {
+                    const directRes = await fetch(DB_URL);
+                    db = await directRes.json();
+                    inputField.disabled = false;
+                    setupGame();
+                } catch (e) {
+                    document.getElementById('message').innerText = "⚠️ Error cargando base de datos. Verifica tu db.json.";
+                }
+            }
+        }
+
+        function setupGame() {
+            if (db.length === 0) return;
+            target = db[Math.floor(Math.random() * db.length)];
+            const tName = target.n.replace(/\s/g, "");
+            const board = document.getElementById('game-board');
+            board.innerHTML = "";
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('div');
+                row.className = 'row';
+                for (let j = 0; j < tName.length; j++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    row.appendChild(tile);
+                }
+                board.appendChild(row);
+            }
+        }
+
+        function processGuess() {
+            const input = document.getElementById('guess-input');
+            let guessRaw = input.value.toUpperCase().replace(/\s/g, "");
+            let targetClean = target.n.toUpperCase().replace(/\s/g, "");
+            if (!guessRaw || currentAttempt >= 6) return;
+
+            let guess = guessRaw.padEnd(targetClean.length, " ").substring(0, targetClean.length);
+            const rowTiles = document.querySelectorAll('.row')[currentAttempt].children;
+            let targetArr = targetClean.split("");
+            let rowResult = [];
+
+            for (let i = 0; i < targetClean.length; i++) {
+                rowTiles[i].innerText = guess[i].trim();
+                if (guess[i] === targetClean[i]) {
+                    rowTiles[i].classList.add('correct');
+                    targetArr[i] = null;
+                    rowResult.push('🟩');
+                } else rowResult.push('');
+            }
+
+            for (let i = 0; i < targetClean.length; i++) {
+                if (!rowTiles[i].classList.contains('correct')) {
+                    let idx = targetArr.indexOf(guess[i]);
+                    if (guess[i] !== " " && idx > -1) {
+                        rowTiles[i].classList.add('present');
+                        targetArr[idx] = null;
+                        rowResult[i] = '🟨';
+                    } else {
+                        rowTiles[i].classList.add('absent');
+                        rowResult[i] = '⬛';
+                    }
+                }
+            }
+            matrix.push(rowResult);
+            currentAttempt++;
+            renderHints();
+            
+            if (guess === targetClean || currentAttempt === 6) {
+                document.getElementById('message').innerText = (guess === targetClean ? ui[lang].win : ui[lang].lose) + target.n;
+                input.disabled = true;
+                document.getElementById('share-btn').style.display = 'block';
+            }
+            input.value = "";
+            document.getElementById('suggestions').style.display = "none";
+        }
+
+        function renderHints() {
+            const list = document.getElementById('hints-list');
+            list.innerHTML = "";
+            const h = ui[lang];
+            const data = [
+                h.p[0] + (lang === 'es' ? target.p : target.c),
+                h.p[1] + target.i,
+                h.p[2] + target.t,
+                h.p[3] + target.f,
+                h.p[4] + target.pk
+            ];
+            for (let i = 0; i < currentAttempt && i < 5; i++) {
+                const div = document.createElement('div');
+                div.style = "margin:5px 0; font-size:0.85rem; border-bottom:1px solid #3a3a3c;";
+                div.innerText = data[i];
+                list.appendChild(div);
+            }
+        }
+
+        function switchLang(l) {
+            lang = l;
+            document.getElementById('es-btn').className = l === 'es' ? 'active' : '';
+            document.getElementById('en-btn').className = l === 'en' ? 'active' : '';
+            document.getElementById('h-title').innerText = ui[l].h;
+            document.getElementById('guess-input').placeholder = ui[l].ph;
+            renderHints();
+        }
+
+        function shareResult() {
+            let text = `Coasterdle ${currentAttempt}/6\n` + matrix.map(r => r.join('')).join('\n');
+            navigator.clipboard.writeText(text);
+            alert(ui[lang].copy);
+        }
+
+        document.getElementById('guess-input').addEventListener('input', (e) => {
+            const val = e.target.value.toUpperCase();
+            const sugg = document.getElementById('suggestions');
+            sugg.innerHTML = "";
+            if (!val || db.length === 0) { sugg.style.display = "none"; return; }
+            const filtered = db.filter(c => c.n.toUpperCase().includes(val)).slice(0, 8);
+            if (filtered.length) {
+                sugg.style.display = "block";
+                filtered.forEach(c => {
+                    const d = document.createElement('div');
+                    d.className = 'sugg-item';
+                    d.innerText = `${c.n} (${c.pk})`;
+                    d.onclick = () => { e.target.value = c.n; sugg.style.display = "none"; processGuess(); };
+                    sugg.appendChild(d);
+                });
+            }
+        });
+
+        document.getElementById('guess-input').addEventListener('keypress', e => { if(e.key === 'Enter') processGuess(); });
+
+        init();
+    </script>
+</body>
+</html>
