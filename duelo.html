@@ -3,95 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coaster Clash - ¿Quién tiene más?</title>
+    <title>Coaster Clash - Duelo de Inversiones</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .container { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; }
-        .card { background: #2d2d2d; padding: 20px; border-radius: 15px; width: 250px; text-align: center; border: 3px solid #444; cursor: pointer; transition: 0.3s; }
-        .card:hover { transform: scale(1.05); border-color: #538d4e; }
-        .vs { font-size: 2rem; font-weight: bold; color: #ff4444; }
-        .score { font-size: 1.5rem; margin-bottom: 20px; color: #ffd700; }
-        h1 { margin-bottom: 10px; }
-        .btn-next { margin-top: 30px; padding: 10px 20px; background: #538d4e; border: none; color: white; border-radius: 5px; cursor: pointer; display: none; }
+        :root { --bg: #121213; --card: #272729; --accent: #538d4e; --wrong: #811d1d; --text: #ffffff; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; justify-content: center; }
+        
+        .header { text-align: center; margin-bottom: 20px; }
+        .score-board { font-size: 1.5rem; font-weight: bold; color: #ffd700; margin-bottom: 20px; }
+        
+        .game-container { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center; width: 90%; max-width: 800px; }
+        
+        .card { 
+            background: var(--card); border: 2px solid #3a3a3c; border-radius: 16px; 
+            width: 280px; padding: 30px; text-align: center; cursor: pointer; 
+            transition: all 0.3s ease; display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); background: #2d2d30; }
+        .card h2 { margin: 0; font-size: 1.4rem; color: var(--accent); text-transform: uppercase; }
+        .card p { margin: 5px 0; opacity: 0.8; font-size: 0.9rem; }
+        
+        .vs { font-size: 2rem; font-weight: bold; font-style: italic; color: #ff4444; text-shadow: 2px 2px 0px #000; }
+        
+        #message { margin-top: 30px; font-size: 1.3rem; font-weight: bold; height: 30px; }
+        .btn-next { 
+            margin-top: 20px; padding: 12px 30px; background: var(--accent); 
+            color: white; border: none; border-radius: 8px; font-weight: bold; 
+            cursor: pointer; display: none; font-size: 1rem;
+        }
+
+        /* Animaciones */
+        .correct-anim { animation: pulse 0.5s; border-color: var(--accent) !important; background: #1b3d1b !important; }
+        .wrong-anim { animation: shake 0.5s; border-color: var(--wrong) !important; background: #3d1b1b !important; }
+        
+        @keyframes pulse { 0% {scale: 1;} 50% {scale: 1.05;} 100% {scale: 1;} }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
     </style>
 </head>
 <body>
 
-    <h1>¿Cuál tiene más inversiones?</h1>
-    <div class="score">Puntuación: <span id="score">0</span></div>
+    <div class="header">
+        <h1>COASTER CLASH</h1>
+        <p>¿Cuál tiene más inversiones?</p>
+    </div>
 
-    <div class="container" id="game-area">
-        <div class="card" id="card1" onclick="checkAnswer(0)">
-            <h2 id="name1">-</h2>
-            <p id="park1">-</p>
+    <div class="score-board">Racha Actual: <span id="score">0</span></div>
+
+    <div class="game-container">
+        <div class="card" id="card0" onclick="check(0)">
+            <h2 id="n0">Cargando...</h2>
+            <p id="p0">--</p>
+            <p id="pk0">--</p>
         </div>
 
         <div class="vs">VS</div>
 
-        <div class="card" id="card2" onclick="checkAnswer(1)">
-            <h2 id="name2">-</h2>
-            <p id="park2">-</p>
+        <div class="card" id="card1" onclick="check(1)">
+            <h2 id="n1">Cargando...</h2>
+            <p id="p1">--</p>
+            <p id="pk1">--</p>
         </div>
     </div>
 
-    <div id="result-msg" style="margin-top: 20px; font-size: 1.2rem;"></div>
-    <button class="btn-next" id="next-btn" onclick="nextRound()">Siguiente Ronda</button>
+    <div id="message"></div>
+    <button id="next-btn" class="btn-next" onclick="newRound()">Siguiente Ronda →</button>
 
     <script>
         const DB_URL = "https://raw.githubusercontent.com/jalfaro17/coaster-data/main/db.json";
         let db = [];
+        let currentOptions = [];
         let score = 0;
-        let option1, option2;
+        let canClick = true;
 
         async function init() {
             try {
-                const res = await fetch(DB_URL + "?t=" + Date.now());
-                db = await res.json();
-                nextRound();
-            } catch (e) {
-                alert("Error cargando la base de datos.");
+                const response = await fetch(DB_URL + "?nocache=" + Date.now());
+                db = await response.json();
+                newRound();
+            } catch (err) {
+                document.getElementById('message').innerText = "Error al cargar datos de GitHub";
             }
         }
 
-        function nextRound() {
+        function newRound() {
+            canClick = true;
             document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('result-msg').innerText = "";
-            
-            // Elegir dos distintas
-            option1 = db[Math.floor(Math.random() * db.length)];
-            option2 = db[Math.floor(Math.random() * db.length)];
-            while(option1.n === option2.n) {
-                option2 = db[Math.floor(Math.random() * db.length)];
-            }
+            document.getElementById('message').innerText = "";
+            document.getElementById('card0').className = 'card';
+            document.getElementById('card1').className = 'card';
 
-            document.getElementById('name1').innerText = option1.n;
-            document.getElementById('park1').innerText = option1.pk;
-            document.getElementById('name2').innerText = option2.n;
-            document.getElementById('park2').innerText = option2.pk;
+            // Seleccionar 2 distintas
+            let c1 = db[Math.floor(Math.random() * db.length)];
+            let c2 = db[Math.floor(Math.random() * db.length)];
+            while (c1.n === c2.n) { c2 = db[Math.floor(Math.random() * db.length)]; }
+
+            currentOptions = [c1, c2];
+
+            // Rellenar datos
+            for(let i=0; i<2; i++) {
+                document.getElementById(`n${i}`).innerText = currentOptions[i].n;
+                document.getElementById(`p${i}`).innerText = "🌍 " + currentOptions[i].p;
+                document.getElementById(`pk${i}`).innerText = "📍 " + currentOptions[i].pk;
+            }
         }
 
-        function checkAnswer(choice) {
-            const val1 = option1.i || 0;
-            const val2 = option2.i || 0;
-            
-            let correct;
-            if (val1 === val2) correct = true; // Empate cuenta como acierto
-            else if (choice === 0) correct = val1 > val2;
-            else correct = val2 > val1;
+        function check(index) {
+            if (!canClick) return;
+            canClick = false;
 
-            if (correct) {
-                score++;
-                document.getElementById('result-msg').innerHTML = `<span style="color:#538d4e">¡CORRECTO!</span> (${val1} vs ${val2})`;
-            } else {
-                score = 0;
-                document.getElementById('result-msg').innerHTML = `<span style="color:#ff4444">FALLASTE</span> (${val1} vs ${val2})`;
-            }
+            const other = index === 0 ? 1 : 0;
+            const valSelect = currentOptions[index].i || 0;
+            const valOther = currentOptions[other].i || 0;
 
-            document.getElementById('score').innerText = score;
-            document.getElementById('next-btn').style.display = 'block';
-        }
+            const cardSelect = document.getElementById(`card${index}`);
+            const msg = document.getElementById('message');
 
-        init();
-    </script>
-</body>
-</html>
+            if (val
