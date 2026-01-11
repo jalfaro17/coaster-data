@@ -3,126 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coaster Clash - Duelo Sin Empates</title>
+    <title>Coasterdle Pro - Modo Experto</title>
     <style>
-        :root { --bg: #121213; --card: #272729; --accent: #538d4e; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
-        .game-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-        .card { 
-            background: var(--card); border: 2px solid #3a3a3c; border-radius: 15px; 
-            width: 280px; padding: 25px; cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .card:hover { border-color: var(--accent); transform: translateY(-5px); background: #2d2d30; }
-        .card h2 { color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-size: 1.3rem; }
-        .vs { font-size: 2.5rem; font-weight: bold; align-self: center; color: #ff4444; text-shadow: 2px 2px #000; }
-        .btn-next { 
-            margin-top: 25px; padding: 12px 30px; background: var(--accent); 
-            color: white; border: none; border-radius: 8px; font-weight: bold; 
-            cursor: pointer; display: none; font-size: 1rem;
-        }
-        #score-val { color: #ffd700; font-size: 2rem; }
+        :root { --bg: #121213; --card: #272729; --accent: #538d4e; --border: #3a3a3c; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        
+        .header { text-align: center; margin-bottom: 20px; width: 100%; max-width: 950px; }
+        .table-container { width: 100%; max-width: 950px; overflow-x: auto; margin-bottom: 20px; border-radius: 8px; }
+        
+        table { width: 100%; border-collapse: collapse; min-width: 700px; background: var(--card); }
+        th { border-bottom: 2px solid var(--border); padding: 12px; font-size: 0.75rem; text-transform: uppercase; color: #aaa; }
+        td { border-bottom: 1px solid var(--border); padding: 15px 5px; text-align: center; font-size: 0.9rem; }
+
+        .search-area { width: 100%; max-width: 500px; position: relative; margin-bottom: 20px; }
+        input { width: 100%; padding: 15px; background: var(--card); border: 2px solid var(--border); color: white; border-radius: 8px; font-size: 1rem; outline: none; }
+        input:focus { border-color: var(--accent); }
+        
+        .suggestions { position: absolute; bottom: 100%; left: 0; width: 100%; background: var(--card); border: 1px solid var(--border); max-height: 200px; overflow-y: auto; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .sugg-item { padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); text-align: left; }
+        .sugg-item:hover { background: #3a3a3c; }
+
+        .hint-box { background: #1a2a3a; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: none; border: 1px dashed #00d9ff; width: 100%; max-width: 500px; text-align: center; }
+        
+        .icon { font-weight: bold; margin-left: 4px; }
+        .up { color: #ff4444; }
+        .down { color: #44aaff; }
+        .check { color: #538d4e; }
+        .wrong { color: #ff4444; }
+
+        .btn-hint { background: #b59f3b; color: black; border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; transition: 0.3s; }
+        .btn-hint:hover { background: #d4bc4d; }
     </style>
 </head>
 <body>
 
-    <h1>COASTER CLASH</h1>
-    <p>¿Cuál tiene más inversiones?</p>
-    <div>Racha: <span id="score-val">0</span></div>
-
-    <div class="game-container">
-        <div class="card" id="card0" onclick="check(0)">
-            <h2 id="n0">Cargando...</h2>
-            <p id="pk0">...</p>
-            <p id="p0" style="opacity: 0.6; font-size: 0.8rem;"></p>
-        </div>
-        <div class="vs">VS</div>
-        <div class="card" id="card1" onclick="check(1)">
-            <h2 id="n1">Cargando...</h2>
-            <p id="pk1">...</p>
-            <p id="p1" style="opacity: 0.6; font-size: 0.8rem;"></p>
-        </div>
+    <div class="header">
+        <h1>COASTERDLE PRO</h1>
+        <div id="tries" style="font-weight: bold; color: #ffd700; font-size: 1.2rem;">Intento 1 de 6</div>
     </div>
 
-    <div id="message" style="margin-top: 25px; font-size: 1.2rem; min-height: 1.5rem;"></div>
-    <button id="next-btn" class="btn-next" onclick="newRound()">Siguiente Ronda →</button>
+    <div id="hint-display" class="hint-box"></div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>País</th>
+                    <th>Fabricante</th>
+                    <th>Invers.</th>
+                    <th>Altura</th>
+                    <th>Longitud</th>
+                    <th>Veloc.</th>
+                </tr>
+            </thead>
+            <tbody id="game-body"></tbody>
+        </table>
+    </div>
+
+    <div class="search-area">
+        <div id="suggestions" class="suggestions" style="display:none"></div>
+        <input type="text" id="guess-input" placeholder="Escribe una montaña rusa..." autocomplete="off">
+        <center><button id="hint-btn" class="btn-hint" onclick="revealHint()">💡 PISTA DISPONIBLE</button></center>
+    </div>
+
+    <div id="msg" style="font-size: 1.5rem; font-weight: bold; margin-top: 20px; text-align: center;"></div>
 
     <script>
         const DB_URL = "https://raw.githubusercontent.com/jalfaro17/coaster-data/main/db.json";
-
-        let db = [];
-        let coastersWithInversions = [];
-        let currentOptions = [];
-        let score = 0;
-        let canClick = false;
+        let db = [], target, attempts = 0;
+        const maxAttempts = 6;
 
         async function init() {
             try {
-                const response = await fetch(DB_URL + "?t=" + Date.now());
-                db = await response.json();
-                
-                // Filtramos las que tienen inversiones > 0
-                coastersWithInversions = db.filter(c => (c.i || 0) > 0);
-                
-                if (coastersWithInversions.length < 2) {
-                    document.getElementById('message').innerText = "Error: No hay suficientes datos con inversiones.";
-                    return;
-                }
-                
-                newRound();
-            } catch (err) {
-                document.getElementById('n0').innerText = "Error de conexión";
-            }
+                const res = await fetch(DB_URL + "?t=" + Date.now());
+                db = await res.json();
+                target = db[Math.floor(Math.random() * db.length)];
+                console.log("Secret Target:", target.n); 
+            } catch (e) { alert("Error al conectar con la base de datos."); }
         }
 
-        function newRound() {
-            canClick = true;
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('message').innerText = "";
+        function getComparison(valGuess, valTarget, isNumeric) {
+            if (valGuess === valTarget) return ' <span class="check">✅</span>';
+            if (!isNumeric) return ' <span class="wrong">❌</span>';
             
-            // 1. Elegir la primera
-            let c1 = coastersWithInversions[Math.floor(Math.random() * coastersWithInversions.length)];
-            
-            // 2. Buscar una segunda que tenga inversiones diferentes a la primera
-            let validOptions = coastersWithInversions.filter(c => c.i !== c1.i);
-            
-            if (validOptions.length === 0) {
-                // Si todas tienen las mismas inversiones, elegimos una cualquiera que no sea la misma
-                validOptions = coastersWithInversions.filter(c => c.n !== c1.n);
-            }
-
-            let c2 = validOptions[Math.floor(Math.random() * validOptions.length)];
-
-            currentOptions = [c1, c2];
-
-            for(let i=0; i<2; i++) {
-                document.getElementById(`n${i}`).innerText = currentOptions[i].n;
-                document.getElementById(`pk${i}`).innerText = "📍 " + currentOptions[i].pk;
-                document.getElementById(`p${i}`).innerText = "🌍 " + currentOptions[i].p;
-            }
+            const g = parseFloat(valGuess) || 0;
+            const t = parseFloat(valTarget) || 0;
+            if (t > g) return ' <span class="up">⬆️</span>';
+            if (t < g) return ' <span class="down">⬇️</span>';
+            return ' <span class="check">✅</span>';
         }
 
-        function check(index) {
-            if (!canClick) return;
-            canClick = false;
+        function submitGuess(coaster) {
+            if (attempts >= maxAttempts) return;
+            attempts++;
+            
+            const body = document.getElementById('game-body');
+            const row = document.createElement('tr');
 
-            const other = index === 0 ? 1 : 0;
-            const vSelect = currentOptions[index].i || 0;
-            const vOther = currentOptions[other].i || 0;
+            const dataPoints = [
+                { val: coaster.n, target: target.n, num: false },
+                { val: coaster.p, target: target.p, num: false },
+                { val: coaster.f, target: target.f, num: false },
+                { val: coaster.i, target: target.i, num: true },
+                { val: coaster.h || "0", target: target.h || 0, num: true },
+                { val: coaster.l || "0", target: target.l || 0, num: true },
+                { val: coaster.v || "0", target: target.v || 0, num: true }
+            ];
 
-            const msg = document.getElementById('message');
+            dataPoints.forEach(dp => {
+                const td = document.createElement('td');
+                td.innerHTML = dp.val + getComparison(dp.val, dp.target, dp.num);
+                row.appendChild(td);
+            });
 
-            if (vSelect > vOther) {
-                score++;
-                msg.innerHTML = `<span style="color:#538d4e">✅ ¡CORRECTO!</span> Tiene ${vSelect} frente a ${vOther}`;
+            body.insertBefore(row, body.firstChild); // Añadir arriba para ver mejor
+            document.getElementById('tries').innerText = attempts < 6 ? `Intento ${attempts + 1} de 6` : `Fin de los intentos`;
+            
+            // Mostrar botón de pista en el 3 y 5
+            if (attempts === 3 || attempts === 5) {
+                document.getElementById('hint-btn').style.display = 'inline-block';
             } else {
-                score = 0;
-                msg.innerHTML = `<span style="color:#ff4444">❌ FALLO.</span> Tenía ${vSelect} frente a ${vOther}`;
+                document.getElementById('hint-btn').style.display = 'none';
             }
 
-            document.getElementById('score-val').innerText = score;
-            document.getElementById('next-btn').style.display = 'inline-block';
+            if (coaster.n === target.n) {
+                document.getElementById('msg').innerHTML = "<span style='color:var(--accent)'>🏆 ¡BRUTAL! Has acertado.</span>";
+                endGame();
+            } else if (attempts === maxAttempts) {
+                document.getElementById('msg').innerHTML = "💀 Game Over. Era: " + target.n;
+                endGame();
+            }
         }
+
+        function revealHint() {
+            const display = document.getElementById('hint-display');
+            display.style.display = 'block';
+            
+            if (attempts >= 5) {
+                // Pista del Parque: Primera letra + guiones
+                let pName = target.pk;
+                let hiddenPark = pName[0] + pName.substring(1).replace(/[a-zA-Z0-9]/g, "_");
+                display.innerHTML = `<strong>PISTA INTENTO 5 (Parque):</strong> <code>${hiddenPark}</code>`;
+            } else if (attempts >= 3) {
+                // Pista del Nombre: Primera letra + guiones
+                let nName = target.n;
+                let hiddenName = nName[0] + nName.substring(1).replace(/[a-zA-Z0-9]/g, "_");
+                display.innerHTML = `<strong>PISTA INTENTO 3 (Nombre):</strong> <code>${hiddenName}</code>`;
+            }
+            document.getElementById('hint-btn').style.display = 'none';
+        }
+
+        function endGame() {
+            document.getElementById('guess-input').disabled = true;
+            document.getElementById('suggestions').style.display = 'none';
+        }
+
+        // Buscador
+        const input = document.getElementById('guess-input');
+        const suggBox = document.getElementById('suggestions');
+
+        input.addEventListener('input', () => {
+            const val = input.value.toLowerCase();
+            suggBox.innerHTML = "";
+            if (val.length < 2) { suggBox.style.display = 'none'; return; }
+
+            const filtered = db.filter(c => c.n.toLowerCase().includes(val)).slice(0, 6);
+            if (filtered.length > 0) {
+                suggBox.style.display = 'block';
+                filtered.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'sugg-item';
+                    div.innerText = `${c.n} (${c.pk})`;
+                    div.onclick = () => {
+                        input.value = "";
+                        suggBox.style.display = 'none';
+                        submitGuess(c);
+                    };
+                    suggBox.appendChild(div);
+                });
+            }
+        });
 
         init();
     </script>
