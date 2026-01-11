@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coaster Clash - Duelo Sin Empates</title>
+    <style>
+        :root { --bg: #121213; --card: #272729; --accent: #538d4e; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); text-align: center; padding: 20px; margin: 0; }
+        .game-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        .card { 
+            background: var(--card); border: 2px solid #3a3a3c; border-radius: 15px; 
+            width: 280px; padding: 25px; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); background: #2d2d30; }
+        .card h2 { color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-size: 1.3rem; }
+        .vs { font-size: 2.5rem; font-weight: bold; align-self: center; color: #ff4444; text-shadow: 2px 2px #000; }
+        .btn-next { 
+            margin-top: 25px; padding: 12px 30px; background: var(--accent); 
+            color: white; border: none; border-radius: 8px; font-weight: bold; 
+            cursor: pointer; display: none; font-size: 1rem;
+        }
+        #score-val { color: #ffd700; font-size: 2rem; }
+    </style>
+</head>
+<body>
+
+    <h1>COASTER CLASH</h1>
+    <p>¿Cuál tiene más inversiones?</p>
+    <div>Racha: <span id="score-val">0</span></div>
+
+    <div class="game-container">
+        <div class="card" id="card0" onclick="check(0)">
+            <h2 id="n0">Cargando...</h2>
+            <p id="pk0">...</p>
+            <p id="p0" style="opacity: 0.6; font-size: 0.8rem;"></p>
+        </div>
+        <div class="vs">VS</div>
+        <div class="card" id="card1" onclick="check(1)">
+            <h2 id="n1">Cargando...</h2>
+            <p id="pk1">...</p>
+            <p id="p1" style="opacity: 0.6; font-size: 0.8rem;"></p>
+        </div>
+    </div>
+
+    <div id="message" style="margin-top: 25px; font-size: 1.2rem; min-height: 1.5rem;"></div>
+    <button id="next-btn" class="btn-next" onclick="newRound()">Siguiente Ronda →</button>
+
+    <script>
+        const DB_URL = "https://raw.githubusercontent.com/jalfaro17/coaster-data/main/db.json";
+
+        let db = [];
+        let coastersWithInversions = [];
+        let currentOptions = [];
+        let score = 0;
+        let canClick = false;
+
+        async function init() {
+            try {
+                const response = await fetch(DB_URL + "?t=" + Date.now());
+                db = await response.json();
+                
+                // Filtramos las que tienen inversiones > 0
+                coastersWithInversions = db.filter(c => (c.i || 0) > 0);
+                
+                if (coastersWithInversions.length < 2) {
+                    document.getElementById('message').innerText = "Error: No hay suficientes datos con inversiones.";
+                    return;
+                }
+                
+                newRound();
+            } catch (err) {
+                document.getElementById('n0').innerText = "Error de conexión";
+            }
+        }
+
+        function newRound() {
+            canClick = true;
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('message').innerText = "";
+            
+            // 1. Elegir la primera
+            let c1 = coastersWithInversions[Math.floor(Math.random() * coastersWithInversions.length)];
+            
+            // 2. Buscar una segunda que tenga inversiones diferentes a la primera
+            let validOptions = coastersWithInversions.filter(c => c.i !== c1.i);
+            
+            if (validOptions.length === 0) {
+                // Si todas tienen las mismas inversiones, elegimos una cualquiera que no sea la misma
+                validOptions = coastersWithInversions.filter(c => c.n !== c1.n);
+            }
+
+            let c2 = validOptions[Math.floor(Math.random() * validOptions.length)];
+
+            currentOptions = [c1, c2];
+
+            for(let i=0; i<2; i++) {
+                document.getElementById(`n${i}`).innerText = currentOptions[i].n;
+                document.getElementById(`pk${i}`).innerText = "📍 " + currentOptions[i].pk;
+                document.getElementById(`p${i}`).innerText = "🌍 " + currentOptions[i].p;
+            }
+        }
+
+        function check(index) {
+            if (!canClick) return;
+            canClick = false;
+
+            const other = index === 0 ? 1 : 0;
+            const vSelect = currentOptions[index].i || 0;
+            const vOther = currentOptions[other].i || 0;
+
+            const msg = document.getElementById('message');
+
+            if (vSelect > vOther) {
+                score++;
+                msg.innerHTML = `<span style="color:#538d4e">✅ ¡CORRECTO!</span> Tiene ${vSelect} frente a ${vOther}`;
+            } else {
+                score = 0;
+                msg.innerHTML = `<span style="color:#ff4444">❌ FALLO.</span> Tenía ${vSelect} frente a ${vOther}`;
+            }
+
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        init();
+    </script>
+</body>
+</html>
